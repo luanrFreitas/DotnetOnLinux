@@ -190,3 +190,73 @@ sudo certbot renew --dry-run
 ```
 
 ---
+
+
+# Habilitar clone de repositório do GitHub via SSH
+
+1. Verificar se já existe uma chave SSH
+Antes de criar uma nova chave, verifique se já existe uma:
+
+```
+ls -al ~/.ssh
+```
+Se aparecerem arquivos como id_rsa e id_rsa.pub, significa que você já tem um par de chaves. Se quiser reutilizá-las, pule para o passo 4.
+
+2. Gerar uma nova chave SSH
+Se não houver uma chave ou você quiser criar uma nova, use o seguinte comando:
+
+```
+ssh-keygen -t rsa -b 4096 -C "seu@email.com"
+```
+-t rsa: Define o tipo da chave como RSA.
+-b 4096: Gera uma chave de 4096 bits para mais segurança.
+-C "seu@email.com": Adiciona um comentário à chave, geralmente seu e-mail.
+
+Pressione Enter para aceitar o local padrão (~/.ssh/id_rsa) e, se quiser, defina uma senha para proteger a chave.
+
+3. Adicionar a chave ao SSH-Agent
+Para evitar digitar a senha toda vez, adicione a chave ao agente SSH:
+
+Inicie o ssh-agent:
+
+```
+eval "$(ssh-agent -s)"
+```
+Adicione a chave ao agente:
+
+```
+ssh-add ~/.ssh/id_rsa
+```
+
+4. Adicionar a chave ao GitHub/GitLab/Bitbucket
+Agora, copie a chave pública para adicionar ao serviço Git remoto:
+
+```
+cat ~/.ssh/id_rsa.pub
+```
+Copie o conteúdo da chave e adicione no seu provedor de Git:
+
+GitHub: Vá em Settings → SSH and GPG keys → New SSH key.
+
+GitLab: Vá em Preferences → SSH Keys.
+
+Bitbucket: Vá em Personal Settings → SSH Keys.
+
+5. Testar a conexão
+Agora, teste a conexão com:
+
+```
+ssh -T git@github.com
+```
+Se tudo estiver certo, você verá uma mensagem como:
+
+```
+Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+Para outros serviços:
+
+GitLab: ssh -T git@gitlab.com
+
+Bitbucket: ssh -T git@bitbucket.org
+
